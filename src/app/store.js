@@ -1,8 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import cardReducer from '../features/game/cardSlice';
+import  wordleApi  from '../features/game/apiSlice';
 
-export const store = configureStore({
+const store = configureStore({
   reducer: {
     cards: cardReducer,
+    [wordleApi.reducerPath]:wordleApi.reducer,
   },
+  middleware:(getDefaultMiddleware)=>getDefaultMiddleware().concat(wordleApi.middleware)
 });
+
+export default store

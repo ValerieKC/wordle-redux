@@ -1,13 +1,17 @@
 import styled from "styled-components";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import Swal from "sweetalert2";
 import {
   inputLetter,
-  validateGuess,
+  setColor,
   deleteLetter,
   gameStatus,
   replayGame,
+  validateGuess,
+  correctness,
 } from "./cardSlice";
+import { useGetTodayQuery } from "./apiSlice";
 
 const Header = styled.div`
   width: 100%;
@@ -16,10 +20,10 @@ const Header = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 60px;
+  font-size: 70px;
   color: white;
-  letter-spacing: 10px;
-  font-weight: bold;
+  letter-spacing: 5px;
+  font-weight: 900;
 `;
 
 const Wrapper = styled.div`
@@ -42,10 +46,18 @@ const Card = styled.div`
   border: 1px solid #3a3a3c;
   color: white;
   background-color: ${(props) => (props.backGround ? props.backGround : "")};
+  border-color: ${(props) =>
+    props.borderColor.length === 0 ? "#3a3a3c" : "#565758"};
+
+  ${(props) => props.borderColor && "border-width:2px;"}
+  ${(props) => props.borderColor &&props.backGround&& "border:none;"}
+
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 40px;
+  font-weight: bold;
+  text-transform: uppercase;
 `;
 
 const Btn = styled.div`
@@ -69,8 +81,6 @@ const Btn = styled.div`
 
 const Reg = /^[A-Za-z]$/;
 
-const ans = "Apple";
-
 export function Game() {
   const dispatch = useDispatch();
   const cards = useSelector((state) => state.cards.cards);
@@ -78,6 +88,9 @@ export function Game() {
   const column = useSelector((state) => state.cards.column);
 
   const gameState = useSelector(gameStatus);
+  const ansCorrect = useSelector(correctness);
+
+  const { data: wordToday} = useGetTodayQuery();
 
   useEffect(() => {
     function keyDownHandler(e) {
@@ -90,20 +103,42 @@ export function Game() {
       }
 
       if (e.key === "Enter" && column === 5 && gameState) {
-        dispatch(validateGuess({ ans: ans.toLowerCase() }));
+        dispatch(setColor({ ans: wordToday.today.toLowerCase() }));
+        dispatch(validateGuess());
       }
     }
 
     window.addEventListener("keydown", keyDownHandler);
 
     return () => window.removeEventListener("keydown", keyDownHandler);
-  }, [cards, column, dispatch, gameState, row]);
+  }, [cards, column, dispatch, gameState, row, wordToday?.today]);
 
-  console.log("row:", row, "column:", column, "gameState:", gameState);
 
   const restartGame = () => {
     dispatch(replayGame());
   };
+
+  useEffect(() => {
+    if (ansCorrect && !gameState) {
+      setTimeout(() =>Swal.fire({
+  icon: 'success',
+  title: '恭喜答對',
+  text: `得到${10 - row + 1}分`,
+}) ,0)
+    }
+
+    if (!ansCorrect && !gameState) {
+      setTimeout(
+        () =>
+          Swal.fire({
+            icon: "warning",
+            title: "Oops!",
+            text: `遊戲結束`,
+          }),
+        0
+      );
+    }
+  }, [ansCorrect, gameState, row]);
 
   return (
     <>
@@ -113,8 +148,8 @@ export function Game() {
           {cards.map((item, index) => {
             return item.map((unit, j) => {
               return (
-                <Card key={index + j} backGround={unit.status}>
-                  {unit.letter.toUpperCase()}
+                <Card key={index + j} backGround={unit.status} borderColor={unit.letter}>
+                  {unit.letter}
                 </Card>
               );
             });
