@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
+import { RootState } from "../../app/store";
 import {
   inputLetter,
   setColor,
@@ -40,17 +41,22 @@ const Plate = styled.div`
   gap: 5px;
 `;
 
+interface Props {
+  borderColor?: string | undefined;
+  backGround?: string;
+}
+
 const Card = styled.div`
   width: calc((100% - 20px) / 5);
   height: calc((100% - 25px) / 6);
   border: 1px solid #3a3a3c;
   color: white;
-  background-color: ${(props) => (props.backGround ? props.backGround : "")};
-  border-color: ${(props) =>
-    props.borderColor.length === 0 ? "#3a3a3c" : "#565758"};
+  background-color: ${(props:Props) => (props.backGround ? props.backGround : "")};
+  border-color: ${(props:Props) =>
+    props.borderColor ? "#565758" : "#3a3a3c"};
 
   ${(props) => props.borderColor && "border-width:2px;"}
-  ${(props) => props.borderColor &&props.backGround&& "border:none;"}
+  ${(props) => props.borderColor && props.backGround && "border:none;"}
 
   display: flex;
   justify-content: center;
@@ -83,17 +89,17 @@ const Reg = /^[A-Za-z]$/;
 
 export function Game() {
   const dispatch = useDispatch();
-  const cards = useSelector((state) => state.cards.cards);
-  const row = useSelector((state) => state.cards.row);
-  const column = useSelector((state) => state.cards.column);
+  const cards = useSelector((state: RootState) => state.cards.cards);
+  const row = useSelector((state: RootState) => state.cards.row);
+  const column = useSelector((state: RootState) => state.cards.column);
 
   const gameState = useSelector(gameStatus);
   const ansCorrect = useSelector(correctness);
 
-  const { data: wordToday} = useGetTodayQuery();
+  const { data: wordToday } = useGetTodayQuery();
 
   useEffect(() => {
-    function keyDownHandler(e) {
+    function keyDownHandler(e: KeyboardEvent) {
       if (Reg.test(e.key) && column < 5 && gameState && row < 6) {
         dispatch(inputLetter({ ans: e.key.toLowerCase() }));
       }
@@ -103,7 +109,7 @@ export function Game() {
       }
 
       if (e.key === "Enter" && column === 5 && gameState) {
-        dispatch(setColor({ ans: wordToday.today.toLowerCase() }));
+        dispatch(setColor({ ans: wordToday?.today.toLowerCase() }));
         dispatch(validateGuess());
       }
     }
@@ -113,18 +119,21 @@ export function Game() {
     return () => window.removeEventListener("keydown", keyDownHandler);
   }, [cards, column, dispatch, gameState, row, wordToday?.today]);
 
-
   const restartGame = () => {
     dispatch(replayGame());
   };
 
   useEffect(() => {
     if (ansCorrect && !gameState) {
-      setTimeout(() =>Swal.fire({
-  icon: 'success',
-  title: '恭喜答對',
-  text: `得到${10 - row + 1}分`,
-}) ,0)
+      setTimeout(
+        () =>
+          Swal.fire({
+            icon: "success",
+            title: "恭喜答對",
+            text: `得到${10 - row + 1}分`,
+          }),
+        0
+      );
     }
 
     if (!ansCorrect && !gameState) {
@@ -148,7 +157,11 @@ export function Game() {
           {cards.map((item, index) => {
             return item.map((unit, j) => {
               return (
-                <Card key={index + j} backGround={unit.status} borderColor={unit.letter}>
+                <Card
+                  key={index + j}
+                  backGround={unit.status}
+                  borderColor={unit.letter}
+                >
                   {unit.letter}
                 </Card>
               );

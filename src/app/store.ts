@@ -10,4 +10,6 @@ const store = configureStore({
   middleware:(getDefaultMiddleware)=>getDefaultMiddleware().concat(wordleApi.middleware)
 });
 
+export type RootState = ReturnType<typeof store.getState>
+
 export default store

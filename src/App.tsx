@@ -1,3 +1,4 @@
+import React from "react";
 import {createGlobalStyle} from "styled-components";
 import {Reset} from "styled-reset";
 import { Game } from "./features/game/Game";
