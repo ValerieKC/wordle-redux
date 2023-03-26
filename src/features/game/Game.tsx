@@ -69,8 +69,8 @@ const Card = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 40px;
-  font-weight: bold;
+  font-size: 30px;
+  font-weight: 900;
   text-transform: uppercase;
 
   background-color: ${(props: Props) =>
@@ -166,7 +166,7 @@ export function Game() {
             title: "恭喜答對",
             text: `得到${10 - row + 1}分`,
           }),
-        0
+        700
       );
     }
 
@@ -178,7 +178,7 @@ export function Game() {
             title: "Oops!",
             text: `遊戲結束`,
           }),
-        0
+        700
       );
     }
   }, [ansCorrect, gameState, row]);
