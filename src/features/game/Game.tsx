@@ -13,15 +13,16 @@ import {
   correctness,
 } from "./cardSlice";
 import { useGetTodayQuery } from "./apiSlice";
+import Keyboard from "../../components/Keyboard";
 
 const Header = styled.div`
   width: 100%;
-  height: 150px;
+  height: 100px;
   background-color: black;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 70px;
+  font-size: 50px;
   color: white;
   letter-spacing: 5px;
   font-weight: 900;
@@ -30,6 +31,9 @@ const Header = styled.div`
 const Wrapper = styled.div`
   margin: 0 auto;
   max-width: 600px;
+  height:calc(100vh - 100px);
+  display: flex;
+  flex-direction: column;
 `;
 const Plate = styled.div`
   margin: 0 auto;
@@ -204,6 +208,7 @@ export function Game() {
           })}
         </Plate>
         <Btn onClick={restartGame}>Restart Game</Btn>
+        <Keyboard />
       </Wrapper>
     </>
   );
