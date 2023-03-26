@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
@@ -44,19 +44,27 @@ const Plate = styled.div`
 interface Props {
   borderColor?: string | undefined;
   backGround?: string;
+  isFlipped?: boolean;
+  delay?: number;
 }
+
+const FlipCard = keyframes`
+   0% {
+    transform: scaleY(1);
+  }
+  50%{
+transform: scaleY(0);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+`;
 
 const Card = styled.div`
   width: calc((100% - 20px) / 5);
   height: calc((100% - 25px) / 6);
   border: 1px solid #3a3a3c;
   color: white;
-  background-color: ${(props:Props) => (props.backGround ? props.backGround : "")};
-  border-color: ${(props:Props) =>
-    props.borderColor ? "#565758" : "#3a3a3c"};
-
-  ${(props) => props.borderColor && "border-width:2px;"}
-  ${(props) => props.borderColor && props.backGround && "border:none;"}
 
   display: flex;
   justify-content: center;
@@ -64,6 +72,17 @@ const Card = styled.div`
   font-size: 40px;
   font-weight: bold;
   text-transform: uppercase;
+
+  background-color: ${(props: Props) =>
+    props.backGround ? props.backGround : ""};
+  border-color: ${(props: Props) =>
+    props.borderColor ? "#565758" : "#3a3a3c"};
+  ${(props) => props.borderColor && "border-width:2px;"}
+  ${(props) => props.isFlipped && "border:none;"}
+  animation-name: ${(props) => (props.isFlipped ? FlipCard : "")};
+  animation-timing-function: linear;
+  animation-iteration-count: ease;
+  animation-duration: 0.5s;
 `;
 
 const Btn = styled.div`
@@ -95,7 +114,6 @@ export function Game() {
 
   const gameState = useSelector(gameStatus);
   const ansCorrect = useSelector(correctness);
-
   const { data: wordToday } = useGetTodayQuery();
 
   useEffect(() => {
@@ -109,8 +127,24 @@ export function Game() {
       }
 
       if (e.key === "Enter" && column === 5 && gameState) {
-        dispatch(setColor({ ans: wordToday?.today.toLowerCase() }));
-        dispatch(validateGuess());
+        for (let i = 0; i < 5; i++) {
+          let promise = new Promise<void>((resolve) =>
+            setTimeout(() => {
+              dispatch(
+                setColor({
+                  ans: wordToday?.today.toLowerCase(),
+                  index: i,
+                })
+              );
+              resolve();
+            }, i * 350)
+          );
+          promise.then(() => {
+            if (i + 1 === 5) {
+              dispatch(validateGuess());
+            }
+          });
+        }
       }
     }
 
@@ -161,6 +195,7 @@ export function Game() {
                   key={index + j}
                   backGround={unit.status}
                   borderColor={unit.letter}
+                  isFlipped={unit.isFlipped}
                 >
                   {unit.letter}
                 </Card>
