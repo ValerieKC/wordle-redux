@@ -30,10 +30,12 @@ const cardSlice = createSlice({
   initialState,
   reducers: {
     inputLetter(state, action: PayloadAction<{ ans: string }>) {
+      if(state.column===5) return
       const { ans } = action.payload;
       state.cards[state.row][state.column].letter = ans;
       state.column += 1;
     },
+   
     setColor(state, action) {
       const { ans, index } = action.payload;
 
@@ -82,6 +84,11 @@ export const {
   replayGame,
   validateGuess,
 } = cardSlice.actions;
+
+export const rowState=(state:RootState)=>state.cards.row
+export const columnState = (state: RootState) => state.cards.column;
+export const cardsState = (state: RootState) => state.cards.cards;
+
 
 export const gameStatus = (state: RootState) => state.cards.gameStatus;
 export const correctness = (state: RootState) => state.cards.correctness;

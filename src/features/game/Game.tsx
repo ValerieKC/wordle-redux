@@ -2,8 +2,10 @@ import styled, { keyframes } from "styled-components";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
-import { RootState } from "../../app/store";
 import {
+  rowState,
+  columnState,
+  cardsState,
   inputLetter,
   setColor,
   deleteLetter,
@@ -11,9 +13,11 @@ import {
   replayGame,
   validateGuess,
   correctness,
+  
 } from "./cardSlice";
 import { useGetTodayQuery } from "./apiSlice";
 import Keyboard from "../../components/Keyboard";
+import { setKeyState,clearKeyState } from "./keyboardSlice";
 
 const Header = styled.div`
   width: 100%;
@@ -86,18 +90,18 @@ const Card = styled.div`
   animation-name: ${(props) => (props.isFlipped ? FlipCard : "")};
   animation-timing-function: linear;
   animation-iteration-count: ease;
-  animation-duration: 0.5s;
+  animation-duration: 0.6s;
 `;
 
 const Btn = styled.div`
   margin: 20px auto;
   width: 200px;
-  height: 75px;
+  height: 50px;
   display: flex;
   justify-content: center;
   align-items: center;
   border: 1px solid #3a3a3a;
-  border-radius: 5px;
+  border-radius: 10px;
   color: #3a3a3a;
   font-size: 20px;
   cursor: pointer;
@@ -112,18 +116,21 @@ const Reg = /^[A-Za-z]$/;
 
 export function Game() {
   const dispatch = useDispatch();
-  const cards = useSelector((state: RootState) => state.cards.cards);
-  const row = useSelector((state: RootState) => state.cards.row);
-  const column = useSelector((state: RootState) => state.cards.column);
 
+  const cards = useSelector(cardsState);
+  const row = useSelector(rowState);
+  const column = useSelector(columnState);
   const gameState = useSelector(gameStatus);
   const ansCorrect = useSelector(correctness);
+
   const { data: wordToday } = useGetTodayQuery();
+
+console.log(wordToday?.today.toLowerCase());
 
   useEffect(() => {
     function keyDownHandler(e: KeyboardEvent) {
       if (Reg.test(e.key) && column < 5 && gameState && row < 6) {
-        dispatch(inputLetter({ ans: e.key.toLowerCase() }));
+        dispatch(inputLetter({ ans: e.key.toUpperCase() }));
       }
 
       if (e.key === "Backspace" && column > 0 && gameState) {
@@ -136,7 +143,7 @@ export function Game() {
             setTimeout(() => {
               dispatch(
                 setColor({
-                  ans: wordToday?.today.toLowerCase(),
+                  ans: wordToday?.today.toUpperCase(),
                   index: i,
                 })
               );
@@ -146,19 +153,29 @@ export function Game() {
           promise.then(() => {
             if (i + 1 === 5) {
               dispatch(validateGuess());
+              const guessLetters = cards[row].map((item: { letter: string }) => item.letter);
+              dispatch(
+                setKeyState({ guessing: guessLetters, ans: wordToday?.today })
+              );
             }
           });
         }
       }
     }
 
+    
+
     window.addEventListener("keydown", keyDownHandler);
 
-    return () => window.removeEventListener("keydown", keyDownHandler);
+    return () => 
+      window.removeEventListener("keydown", keyDownHandler);
+   
+    
   }, [cards, column, dispatch, gameState, row, wordToday?.today]);
 
   const restartGame = () => {
     dispatch(replayGame());
+    dispatch(clearKeyState())
   };
 
   useEffect(() => {
