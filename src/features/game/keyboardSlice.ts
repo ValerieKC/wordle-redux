@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from "../../app/store";
 
 const letter: string[] = [
   "Q",
@@ -74,5 +75,17 @@ const keyBoardSlice = createSlice({
 });
 
 export const { setKeyState, clearKeyState } = keyBoardSlice.actions;
+export const firstRowKeys = (state: RootState) =>
+  state.keys.filter((item) =>
+    ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"].includes(item.key)
+  );
+export const secondRowKeys = (state: RootState) =>
+  state.keys.filter((item) =>
+    ["A", "S", "D", "F", "G", "H", "J", "K", "L"].includes(item.key)
+  );
+export const thirdRowKeys = (state: RootState) =>
+  state.keys.filter((item) =>
+    ["Z", "X", "C", "V", "B", "N", "M"].includes(item.key)
+  );
 
 export default keyBoardSlice.reducer;

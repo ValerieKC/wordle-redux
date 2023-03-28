@@ -12,7 +12,7 @@ import {
   deleteLetter,
 } from "../features/game/cardSlice";
 import { useGetTodayQuery } from "../features/game/apiSlice";
-import { setKeyState } from "../features/game/keyboardSlice";
+import { setKeyState,firstRowKeys,secondRowKeys,thirdRowKeys } from "../features/game/keyboardSlice";
 
 const Wrapper = styled.div`
   margin: auto auto;
@@ -26,6 +26,12 @@ const Row = styled.div`
   column-gap: 6px;
   touch-action: manipulation;
 `;
+
+interface BtnColor {
+  isGuessed:boolean;
+  backGround:string;
+}
+
 const Btn = styled.div`
   width: calc((100% - 54px) / 10);
   height: 58px;
@@ -34,25 +40,34 @@ const Btn = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 4px;
-  background-color: #818384;
   font-size: 20px;
   font-weight: bold;
   color: white;
   cursor: pointer;
+  background-color: ${(props: BtnColor) =>
+    props.isGuessed ? props.backGround : "#818384"};
 `;
 const Space = styled.div`
   height: 58px;
   width: calc((100% - 54px) / 10 / 2);
 `;
 
-const SpecialBtn = styled(Btn)`
+const SpecialBtn = styled.div`
   width: calc((100% - 54px) / 10 * 2);
   font-size: 12px;
+  height: 58px;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  background-color: #818384;
 `;
 
-const firstRow = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"];
-const secondRow = ["A", "S", "D", "F", "G", "H", "J", "K", "L"];
-const thirdRow = ["Z", "X", "C", "V", "B", "N", "M"];
+
 
 export default function Keyboard() {
   const dispatch = useDispatch();
@@ -61,6 +76,11 @@ export default function Keyboard() {
   const column = useSelector(columnState);
   const gameState = useSelector(gameStatus);
   const { data: wordToday } = useGetTodayQuery();
+
+  const firstRow = useSelector(firstRowKeys);
+    const secondRow = useSelector(secondRowKeys);
+  const thirdRow = useSelector(thirdRowKeys);
+console.log(firstRow)
 
   const keyBtnHandler = (word: string) => {
     if (column === 5) return;
@@ -106,8 +126,13 @@ export default function Keyboard() {
     <Wrapper>
       <Row>
         {firstRow.map((item) => (
-          <Btn key={item} onClick={() => keyBtnHandler(item)}>
-            {item}
+          <Btn
+            key={item.key}
+            onClick={() => keyBtnHandler(item.key)}
+            backGround={item.status}
+            isGuessed={item.type}
+          >
+            {item.key}
           </Btn>
         ))}
       </Row>
@@ -115,10 +140,12 @@ export default function Keyboard() {
         <Space />
         {secondRow.map((item) => (
           <Btn
-            key={item}
-            onClick={() => dispatch(inputLetter({ ans: item.toUpperCase() }))}
+            key={item.key}
+            onClick={() => keyBtnHandler(item.key)}
+            backGround={item.status}
+            isGuessed={item.type}
           >
-            {item}
+            {item.key}
           </Btn>
         ))}
         <Space />
@@ -127,10 +154,12 @@ export default function Keyboard() {
         <SpecialBtn onClick={enterHandler}>Enter</SpecialBtn>
         {thirdRow.map((item) => (
           <Btn
-            key={item}
-            onClick={() => dispatch(inputLetter({ ans: item.toUpperCase() }))}
+            key={item.key}
+            onClick={() => keyBtnHandler(item.key)}
+            backGround={item.status}
+            isGuessed={item.type}
           >
-            {item}
+            {item.key}
           </Btn>
         ))}
         <SpecialBtn onClick={deleteHandler}>Delete</SpecialBtn>
