@@ -13,11 +13,12 @@ import {
   replayGame,
   validateGuess,
   correctness,
-  
+  setIsPressedTrue,
+  setIsPressedFalse
 } from "./cardSlice";
 import { useGetTodayQuery } from "./apiSlice";
 import Keyboard from "../../components/Keyboard";
-import { setKeyState,clearKeyState } from "./keyboardSlice";
+import { setKeyState, clearKeyState } from "./keyboardSlice";
 
 const Header = styled.div`
   width: 100%;
@@ -35,7 +36,7 @@ const Header = styled.div`
 const Wrapper = styled.div`
   margin: 0 auto;
   max-width: 600px;
-  height:calc(100vh - 100px);
+  height: calc(100vh - 100px);
   display: flex;
   flex-direction: column;
 `;
@@ -53,7 +54,7 @@ interface Props {
   borderColor?: string | undefined;
   backGround?: string;
   isFlipped?: boolean;
-  delay?: number;
+  isPressed?: boolean;
 }
 
 const FlipCard = keyframes`
@@ -91,6 +92,7 @@ const Card = styled.div`
   animation-timing-function: linear;
   animation-iteration-count: ease;
   animation-duration: 0.6s;
+  transform: ${({ isPressed }) => (isPressed ? "scale(1.1)" : "scale(1)")};
 `;
 
 const Btn = styled.div`
@@ -124,13 +126,16 @@ export function Game() {
   const ansCorrect = useSelector(correctness);
 
   const { data: wordToday } = useGetTodayQuery();
+  
 
-console.log(wordToday?.today.toLowerCase());
 
   useEffect(() => {
     function keyDownHandler(e: KeyboardEvent) {
       if (Reg.test(e.key) && column < 5 && gameState && row < 6) {
+        dispatch(setIsPressedTrue())
         dispatch(inputLetter({ ans: e.key.toUpperCase() }));
+
+        setTimeout(() => dispatch(setIsPressedFalse()), 50);
       }
 
       if (e.key === "Backspace" && column > 0 && gameState) {
@@ -153,7 +158,9 @@ console.log(wordToday?.today.toLowerCase());
           promise.then(() => {
             if (i + 1 === 5) {
               dispatch(validateGuess());
-              const guessLetters = cards[row].map((item: { letter: string }) => item.letter);
+              const guessLetters = cards[row].map(
+                (item: { letter: string }) => item.letter
+              );
               dispatch(
                 setKeyState({ guessing: guessLetters, ans: wordToday?.today })
               );
@@ -163,19 +170,14 @@ console.log(wordToday?.today.toLowerCase());
       }
     }
 
-    
-
     window.addEventListener("keydown", keyDownHandler);
 
-    return () => 
-      window.removeEventListener("keydown", keyDownHandler);
-   
-    
+    return () => window.removeEventListener("keydown", keyDownHandler);
   }, [cards, column, dispatch, gameState, row, wordToday?.today]);
 
   const restartGame = () => {
     dispatch(replayGame());
-    dispatch(clearKeyState())
+    dispatch(clearKeyState());
   };
 
   useEffect(() => {
@@ -217,6 +219,7 @@ console.log(wordToday?.today.toLowerCase());
                   backGround={unit.status}
                   borderColor={unit.letter}
                   isFlipped={unit.isFlipped}
+                  isPressed={unit.isPressed}
                 >
                   {unit.letter}
                 </Card>
