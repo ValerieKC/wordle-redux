@@ -1,0 +1,70 @@
+import { DefaultTheme } from "styled-components";
+
+declare module "styled-components" {
+  export interface DefaultTheme {
+    [key: string]: string;
+    mode: string;
+    BODY_BACKGROUND_COLOR: string;
+    HEADER_BACKGROUND_COLOR: string;
+    HEADER_FONT_COLOR: string;
+    CARD_FONT_COLOR_DEFAULT: string;
+    CARD_FONT_COLOR_ANSWERED: string;
+    CARD_BORDER_COLOR_DEFAULT: string;
+    CARD_BORDER_COLOR_FOCUS: string;
+    CARD_BACKGROUND_HALFRIGHT: string;
+    CARD_BACKGROUND_CORRECT: string;
+    CARD_BACKGROUND_WRONG: string;
+    KEY_BACKGROUND_DEFAULT: string;
+    KEY_BACKGROUND_HALF_RIGHT: string;
+    KEY_BACKGROUND_CORRECT: string;
+    KEY_BACKGROUND_WRONG: string;
+    BTN_BORDER_COLOR: string;
+    BTN_FONT_COLOR: string;
+    BTN_HOVER_BACKGROUND_COLOR: string;
+    BTN_HOVER_FONT_COLOR: string;
+  }
+}
+
+export const darkTheme:DefaultTheme = {
+  mode: "dark",
+  BODY_BACKGROUND_COLOR: "#000",
+  HEADER_BACKGROUND_COLOR: "#000",
+  HEADER_FONT_COLOR: "#fff",
+  CARD_FONT_COLOR_DEFAULT:"#fff",
+  CARD_FONT_COLOR_ANSWERED: "#fff",
+  CARD_BORDER_COLOR_DEFAULT: "#3a3a3c",
+  CARD_BORDER_COLOR_FOCUS: "#565758",
+  CARD_BACKGROUND_HALFRIGHT: "#b59f3b",
+  CARD_BACKGROUND_CORRECT: "#538d4e",
+  CARD_BACKGROUND_WRONG: "#3a3a3c",
+  KEY_BACKGROUND_DEFAULT: "#818384",
+  KEY_BACKGROUND_HALF_RIGHT: "#b59f3b",
+  KEY_BACKGROUND_CORRECT: "#538d4e",
+  KEY_BACKGROUND_WRONG: "#3a3a3c",
+  BTN_BORDER_COLOR: "#3a3a3a",
+  BTN_FONT_COLOR: "#3a3a3a",
+  BTN_HOVER_BACKGROUND_COLOR: "#ebebeb",
+  BTN_HOVER_FONT_COLOR: "#000",
+};
+export const lightTheme: DefaultTheme = {
+  mode: "light",
+
+  BODY_BACKGROUND_COLOR: "#fff",
+  HEADER_BACKGROUND_COLOR: "#fff",
+  HEADER_FONT_COLOR: "#000",
+  CARD_FONT_COLOR_DEFAULT: "000",
+  CARD_FONT_COLOR_ANSWERED: "#fff",
+  CARD_BORDER_COLOR_DEFAULT: "#d3d6da",
+  CARD_BORDER_COLOR_FOCUS: "#878a8c",
+  CARD_BACKGROUND_HALFRIGHT: "#c9b458",
+  CARD_BACKGROUND_CORRECT: "#6aaa64",
+  CARD_BACKGROUND_WRONG: "#787c7e",
+  KEY_BACKGROUND_DEFAULT: "#d3d6da",
+  KEY_BACKGROUND_HALF_RIGHT: "#c9b458",
+  KEY_BACKGROUND_CORRECT: "#6aaa64",
+  KEY_BACKGROUND_WRONG: "#787c7e",
+  BTN_BORDER_COLOR: "#3a3a3a",
+  BTN_FONT_COLOR: "#3a3a3a",
+  BTN_HOVER_BACKGROUND_COLOR: "#ebebeb",
+  BTN_HOVER_FONT_COLOR: "#fff",
+};

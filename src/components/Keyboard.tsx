@@ -11,7 +11,6 @@ import {
   validateGuess,
   deleteLetter,
   setIsPressedTrue,
-  setIsPressedFalse,
 } from "../features/game/cardSlice";
 import { useGetTodayQuery } from "../features/game/apiSlice";
 import { setKeyState,firstRowKeys,secondRowKeys,thirdRowKeys } from "../features/game/keyboardSlice";
@@ -88,7 +87,6 @@ export default function Keyboard() {
     if (column < 5 && gameState && row < 6) {
       dispatch(setIsPressedTrue());
       dispatch(inputLetter({ ans: word.toUpperCase() }));
-      setTimeout(() => dispatch(setIsPressedFalse()), 50);
     }
   };
 

@@ -38,24 +38,21 @@ const cardSlice = createSlice({
     setIsPressedTrue(state) {
       state.cards[state.row][state.column].isPressed = true;
     },
-    setIsPressedFalse(state) {
-      state.cards[state.row][state.column-1].isPressed = false;
-    },
     setColor(state, action) {
       const { ans, index } = action.payload;
 
       if (state.cards[state.row][index].letter === ans[index]) {
-        state.cards[state.row][index].status = "#538d4e";
+        state.cards[state.row][index].status = "CARD_BACKGROUND_CORRECT";
       } else if (ans.includes(state.cards[state.row][index].letter)) {
-        state.cards[state.row][index].status = "#b59f3b";
+        state.cards[state.row][index].status = "CARD_BACKGROUND_HALFRIGHT";
       } else {
-        state.cards[state.row][index].status = "#3a3a3c";
+        state.cards[state.row][index].status = "CARD_BACKGROUND_WRONG";
       }
       state.cards[state.row][index].isFlipped = true;
     },
     validateGuess(state) {
       const check = state.cards[state.row].every(
-        (item) => item.status === "#538d4e"
+        (item) => item.status === "CARD_BACKGROUND_CORRECT"
       );
 
       if (check) {
@@ -88,7 +85,6 @@ export const {
   replayGame,
   validateGuess,
   setIsPressedTrue,
-  setIsPressedFalse,
 } = cardSlice.actions;
 
 export const rowState=(state:RootState)=>state.cards.row

@@ -1,4 +1,4 @@
-import styled, { keyframes } from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
@@ -13,22 +13,24 @@ import {
   replayGame,
   validateGuess,
   correctness,
-  setIsPressedTrue,
-  setIsPressedFalse
+  setIsPressedTrue
 } from "./cardSlice";
 import { useGetTodayQuery } from "./apiSlice";
 import Keyboard from "../../components/Keyboard";
 import { setKeyState, clearKeyState } from "./keyboardSlice";
+import { toggleTheme } from "../theme/themeSlice";
+import { DefaultTheme } from "styled-components";
 
 const Header = styled.div`
   width: 100%;
   height: 100px;
-  background-color: black;
+  position: relative;
+  background-color: ${(props) => props.theme.HEADER_BACKGROUND_COLOR};
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 50px;
-  color: white;
+  color: ${(props) => props.theme.HEADER_FONT_COLOR};
   letter-spacing: 5px;
   font-weight: 900;
 `;
@@ -55,6 +57,7 @@ interface Props {
   backGround?: string;
   isFlipped?: boolean;
   isPressed?: boolean;
+  theme?: DefaultTheme | undefined;
 }
 
 const FlipCard = keyframes`
@@ -62,18 +65,46 @@ const FlipCard = keyframes`
     transform: scaleY(1);
   }
   50%{
-transform: scaleY(0);
+    transform: scaleY(0);
   }
   100% {
     transform: scaleY(1);
   }
 `;
 
+const EnlargeCard =keyframes`
+   0% {
+    transform: scale(1);
+  }
+  50%{
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+`;
+
+const pressedAnimation = () => css`
+  animation-name: ${EnlargeCard};
+  animation-timing-function: linear;
+  animation-iteration-count: ease;
+  animation-duration: 0.05s;
+`;
+
+const flipCardAnimation = () => css`
+  animation-name: ${FlipCard};
+  animation-timing-function: linear;
+  animation-iteration-count: ease;
+  animation-duration: 0.6s;
+`;
 const Card = styled.div`
   width: calc((100% - 20px) / 5);
   height: calc((100% - 25px) / 6);
   border: 1px solid #3a3a3c;
-  color: white;
+  color: ${(props) =>
+    props.isFlipped
+      ? props.theme.CARD_FONT_COLOR_ANSWERED
+      : props.theme.CARD_FONT_COLOR_DEFAULT};
 
   display: flex;
   justify-content: center;
@@ -83,16 +114,18 @@ const Card = styled.div`
   text-transform: uppercase;
 
   background-color: ${(props: Props) =>
-    props.backGround ? props.backGround : ""};
+    props.backGround ? props.theme && props.theme[props.backGround] : ""};
   border-color: ${(props: Props) =>
     props.borderColor ? "#565758" : "#3a3a3c"};
   ${(props) => props.borderColor && "border-width:2px;"}
   ${(props) => props.isFlipped && "border:none;"}
-  animation-name: ${(props) => (props.isFlipped ? FlipCard : "")};
-  animation-timing-function: linear;
-  animation-iteration-count: ease;
-  animation-duration: 0.6s;
-  transform: ${({ isPressed }) => (isPressed ? "scale(1.1)" : "scale(1)")};
+
+
+
+  ${(props) => props.isPressed && pressedAnimation};
+  ${(props) => props.isFlipped && flipCardAnimation};
+
+  
 `;
 
 const Btn = styled.div`
@@ -102,16 +135,30 @@ const Btn = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid #3a3a3a;
+  border: 1px solid ${(props) => props.theme.BTN_BORDER_COLOR};
   border-radius: 10px;
-  color: #3a3a3a;
+  color: ${(props) => props.theme.BTN_FONT_COLOR};
   font-size: 20px;
   cursor: pointer;
   &:hover {
-    background-color: #ebebeb;
-    color: black;
+    background-color: ${(props) => props.theme.BTN_HOVER_BACKGROUND_COLOR};
+    color: ${(props) => props.theme.BTN_HOVER_FONT_COLOR};
     font-size: 21px;
   }
+`;
+
+const SwitchThemeBtn = styled.div`
+  width: 100px;
+  height: 30px;
+  color: red;
+  position: absolute;
+  right: 20px;
+  border: 1px solid white;
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 `;
 
 const Reg = /^[A-Za-z]$/;
@@ -126,16 +173,14 @@ export function Game() {
   const ansCorrect = useSelector(correctness);
 
   const { data: wordToday } = useGetTodayQuery();
-  
-
 
   useEffect(() => {
     function keyDownHandler(e: KeyboardEvent) {
       if (Reg.test(e.key) && column < 5 && gameState && row < 6) {
-        dispatch(setIsPressedTrue())
+        dispatch(setIsPressedTrue());
+
         dispatch(inputLetter({ ans: e.key.toUpperCase() }));
 
-        setTimeout(() => dispatch(setIsPressedFalse()), 50);
       }
 
       if (e.key === "Backspace" && column > 0 && gameState) {
@@ -208,7 +253,12 @@ export function Game() {
 
   return (
     <>
-      <Header>Wordle</Header>
+      <Header>
+        Wordle
+        <SwitchThemeBtn onClick={() => dispatch(toggleTheme())}>
+          Switch
+        </SwitchThemeBtn>
+      </Header>
       <Wrapper>
         <Plate>
           {cards.map((item, index) => {
