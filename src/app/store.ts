@@ -1,5 +1,14 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import { persistStore, persistReducer } from "redux-persist";
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
 import cardReducer from "../features/game/cardSlice";
@@ -16,6 +25,7 @@ const rootReducer = combineReducers({
 
 const persistConfig = {
   key: 'root',
+  version:1,
   storage: storage,
   whitelist: ['theme'] // 需要缓存的白名单,不设置则全部缓存
 };
@@ -26,7 +36,11 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(wordleApi.middleware),
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }).concat(wordleApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
