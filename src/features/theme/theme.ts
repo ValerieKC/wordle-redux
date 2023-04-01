@@ -1,4 +1,6 @@
 import { DefaultTheme } from "styled-components";
+import ThemeBTN from "./theme.png";
+import Theme_Night_BTN from "./theme-night.png";
 
 declare module "styled-components" {
   export interface DefaultTheme {
@@ -22,15 +24,16 @@ declare module "styled-components" {
     BTN_FONT_COLOR: string;
     BTN_HOVER_BACKGROUND_COLOR: string;
     BTN_HOVER_FONT_COLOR: string;
+    SWITCH_THEME_BTN: string;
   }
 }
 
-export const darkTheme:DefaultTheme = {
+export const darkTheme: DefaultTheme = {
   mode: "dark",
   BODY_BACKGROUND_COLOR: "#000",
   HEADER_BACKGROUND_COLOR: "#000",
   HEADER_FONT_COLOR: "#fff",
-  CARD_FONT_COLOR_DEFAULT:"#fff",
+  CARD_FONT_COLOR_DEFAULT: "#fff",
   CARD_FONT_COLOR_ANSWERED: "#fff",
   CARD_BORDER_COLOR_DEFAULT: "#3a3a3c",
   CARD_BORDER_COLOR_FOCUS: "#565758",
@@ -45,6 +48,7 @@ export const darkTheme:DefaultTheme = {
   BTN_FONT_COLOR: "#3a3a3a",
   BTN_HOVER_BACKGROUND_COLOR: "#ebebeb",
   BTN_HOVER_FONT_COLOR: "#000",
+  SWITCH_THEME_BTN: Theme_Night_BTN,
 };
 export const lightTheme: DefaultTheme = {
   mode: "light",
@@ -52,7 +56,7 @@ export const lightTheme: DefaultTheme = {
   BODY_BACKGROUND_COLOR: "#fff",
   HEADER_BACKGROUND_COLOR: "#fff",
   HEADER_FONT_COLOR: "#000",
-  CARD_FONT_COLOR_DEFAULT: "000",
+  CARD_FONT_COLOR_DEFAULT: "#000",
   CARD_FONT_COLOR_ANSWERED: "#fff",
   CARD_BORDER_COLOR_DEFAULT: "#d3d6da",
   CARD_BORDER_COLOR_FOCUS: "#878a8c",
@@ -65,6 +69,7 @@ export const lightTheme: DefaultTheme = {
   KEY_BACKGROUND_WRONG: "#787c7e",
   BTN_BORDER_COLOR: "#3a3a3a",
   BTN_FONT_COLOR: "#3a3a3a",
-  BTN_HOVER_BACKGROUND_COLOR: "#ebebeb",
+  BTN_HOVER_BACKGROUND_COLOR: "#3a3a3a",
   BTN_HOVER_FONT_COLOR: "#fff",
+  SWITCH_THEME_BTN: ThemeBTN,
 };

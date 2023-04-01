@@ -1,4 +1,4 @@
-import styled, { keyframes, css } from "styled-components";
+import styled, { keyframes, css,DefaultTheme } from "styled-components";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
@@ -19,7 +19,8 @@ import { useGetTodayQuery } from "./apiSlice";
 import Keyboard from "../../components/Keyboard";
 import { setKeyState, clearKeyState } from "./keyboardSlice";
 import { toggleTheme } from "../theme/themeSlice";
-import { DefaultTheme } from "styled-components";
+import ThemeBTN from "../theme/theme.png";
+import Theme_Night_BTN from "..theme//theme-night.png"
 
 const Header = styled.div`
   width: 100%;
@@ -116,7 +117,7 @@ const Card = styled.div`
   background-color: ${(props: Props) =>
     props.backGround ? props.theme && props.theme[props.backGround] : ""};
   border-color: ${(props: Props) =>
-    props.borderColor ? "#565758" : "#3a3a3c"};
+    props.borderColor ? props.theme?.CARD_BORDER_COLOR_FOCUS : props.theme?.CARD_BORDER_COLOR_DEFAULT};
   ${(props) => props.borderColor && "border-width:2px;"}
   ${(props) => props.isFlipped && "border:none;"}
 
@@ -144,21 +145,23 @@ const Btn = styled.div`
     background-color: ${(props) => props.theme.BTN_HOVER_BACKGROUND_COLOR};
     color: ${(props) => props.theme.BTN_HOVER_FONT_COLOR};
     font-size: 21px;
+    border: none;
   }
 `;
 
 const SwitchThemeBtn = styled.div`
-  width: 100px;
-  height: 30px;
-  color: red;
+  width: 40px;
+  height: 40px;
+  background-image:url(${props=>props.theme.SWITCH_THEME_BTN});
+  background-size:cover;
   position: absolute;
   right: 20px;
-  border: 1px solid white;
-  font-size: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  
+
 `;
 
 const Reg = /^[A-Za-z]$/;
@@ -256,7 +259,6 @@ export function Game() {
       <Header>
         Wordle
         <SwitchThemeBtn onClick={() => dispatch(toggleTheme())}>
-          Switch
         </SwitchThemeBtn>
       </Header>
       <Wrapper>
