@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 
 interface CardsType {
-  cards: { letter: string; status: string; isFlipped: boolean }[][];
+  cards: { letter: string; status: string; isPressed:boolean,isFlipped: boolean }[][];
   row: number;
   column: number;
   gameStatus: boolean;
@@ -10,11 +10,11 @@ interface CardsType {
 }
 
 const cards: CardsType["cards"] = Array.from({ length: 6 }, () => [
-  { letter: "", status: "", isFlipped: false },
-  { letter: "", status: "", isFlipped: false },
-  { letter: "", status: "", isFlipped: false },
-  { letter: "", status: "", isFlipped: false },
-  { letter: "", status: "", isFlipped: false },
+  { letter: "", status: "", isPressed: false, isFlipped: false },
+  { letter: "", status: "", isPressed: false, isFlipped: false },
+  { letter: "", status: "", isPressed: false, isFlipped: false },
+  { letter: "", status: "", isPressed: false, isFlipped: false },
+  { letter: "", status: "", isPressed: false, isFlipped: false },
 ]);
 
 const initialState: CardsType = {
@@ -30,35 +30,36 @@ const cardSlice = createSlice({
   initialState,
   reducers: {
     inputLetter(state, action: PayloadAction<{ ans: string }>) {
-      if(state.column===5) return
+      if (state.column === 5) return;
       const { ans } = action.payload;
       state.cards[state.row][state.column].letter = ans;
       state.column += 1;
     },
-   
+    setIsPressedTrue(state) {
+      state.cards[state.row][state.column].isPressed = true;
+    },
     setColor(state, action) {
       const { ans, index } = action.payload;
 
       if (state.cards[state.row][index].letter === ans[index]) {
-        state.cards[state.row][index].status = "#538d4e";
+        state.cards[state.row][index].status = "CARD_BACKGROUND_CORRECT";
       } else if (ans.includes(state.cards[state.row][index].letter)) {
-        state.cards[state.row][index].status = "#b59f3b";
+        state.cards[state.row][index].status = "CARD_BACKGROUND_HALFRIGHT";
       } else {
-        state.cards[state.row][index].status = "#3a3a3c";
+        state.cards[state.row][index].status = "CARD_BACKGROUND_WRONG";
       }
       state.cards[state.row][index].isFlipped = true;
-
     },
     validateGuess(state) {
       const check = state.cards[state.row].every(
-        (item) => item.status === "#538d4e"
+        (item) => item.status === "CARD_BACKGROUND_CORRECT"
       );
 
-      if(check){
-        state.correctness=true
-        state.gameStatus=false
+      if (check) {
+        state.correctness = true;
+        state.gameStatus = false;
       }
-     
+
       state.row += 1;
       state.column = 0;
 
@@ -83,6 +84,7 @@ export const {
   deleteLetter,
   replayGame,
   validateGuess,
+  setIsPressedTrue,
 } = cardSlice.actions;
 
 export const rowState=(state:RootState)=>state.cards.row

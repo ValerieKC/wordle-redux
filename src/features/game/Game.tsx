@@ -1,4 +1,4 @@
-import styled, { keyframes } from "styled-components";
+import styled, { keyframes, css,DefaultTheme } from "styled-components";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
@@ -13,21 +13,25 @@ import {
   replayGame,
   validateGuess,
   correctness,
-  
+  setIsPressedTrue
 } from "./cardSlice";
 import { useGetTodayQuery } from "./apiSlice";
 import Keyboard from "../../components/Keyboard";
-import { setKeyState,clearKeyState } from "./keyboardSlice";
+import { setKeyState, clearKeyState } from "./keyboardSlice";
+import { toggleTheme } from "../theme/themeSlice";
+import ThemeBTN from "../theme/theme.png";
+import Theme_Night_BTN from "..theme//theme-night.png"
 
 const Header = styled.div`
   width: 100%;
   height: 100px;
-  background-color: black;
+  position: relative;
+  background-color: ${(props) => props.theme.HEADER_BACKGROUND_COLOR};
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 50px;
-  color: white;
+  color: ${(props) => props.theme.HEADER_FONT_COLOR};
   letter-spacing: 5px;
   font-weight: 900;
 `;
@@ -35,7 +39,7 @@ const Header = styled.div`
 const Wrapper = styled.div`
   margin: 0 auto;
   max-width: 600px;
-  height:calc(100vh - 100px);
+  height: calc(100vh - 100px);
   display: flex;
   flex-direction: column;
 `;
@@ -53,7 +57,8 @@ interface Props {
   borderColor?: string | undefined;
   backGround?: string;
   isFlipped?: boolean;
-  delay?: number;
+  isPressed?: boolean;
+  theme?: DefaultTheme | undefined;
 }
 
 const FlipCard = keyframes`
@@ -61,18 +66,46 @@ const FlipCard = keyframes`
     transform: scaleY(1);
   }
   50%{
-transform: scaleY(0);
+    transform: scaleY(0);
   }
   100% {
     transform: scaleY(1);
   }
 `;
 
+const EnlargeCard =keyframes`
+   0% {
+    transform: scale(1);
+  }
+  50%{
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+`;
+
+const pressedAnimation = () => css`
+  animation-name: ${EnlargeCard};
+  animation-timing-function: linear;
+  animation-iteration-count: ease;
+  animation-duration: 0.05s;
+`;
+
+const flipCardAnimation = () => css`
+  animation-name: ${FlipCard};
+  animation-timing-function: linear;
+  animation-iteration-count: ease;
+  animation-duration: 0.6s;
+`;
 const Card = styled.div`
   width: calc((100% - 20px) / 5);
   height: calc((100% - 25px) / 6);
   border: 1px solid #3a3a3c;
-  color: white;
+  color: ${(props) =>
+    props.isFlipped
+      ? props.theme.CARD_FONT_COLOR_ANSWERED
+      : props.theme.CARD_FONT_COLOR_DEFAULT};
 
   display: flex;
   justify-content: center;
@@ -82,15 +115,18 @@ const Card = styled.div`
   text-transform: uppercase;
 
   background-color: ${(props: Props) =>
-    props.backGround ? props.backGround : ""};
+    props.backGround ? props.theme && props.theme[props.backGround] : ""};
   border-color: ${(props: Props) =>
-    props.borderColor ? "#565758" : "#3a3a3c"};
+    props.borderColor ? props.theme?.CARD_BORDER_COLOR_FOCUS : props.theme?.CARD_BORDER_COLOR_DEFAULT};
   ${(props) => props.borderColor && "border-width:2px;"}
   ${(props) => props.isFlipped && "border:none;"}
-  animation-name: ${(props) => (props.isFlipped ? FlipCard : "")};
-  animation-timing-function: linear;
-  animation-iteration-count: ease;
-  animation-duration: 0.6s;
+
+
+
+  ${(props) => props.isPressed && pressedAnimation};
+  ${(props) => props.isFlipped && flipCardAnimation};
+
+  
 `;
 
 const Btn = styled.div`
@@ -100,16 +136,32 @@ const Btn = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid #3a3a3a;
+  border: 1px solid ${(props) => props.theme.BTN_BORDER_COLOR};
   border-radius: 10px;
-  color: #3a3a3a;
+  color: ${(props) => props.theme.BTN_FONT_COLOR};
   font-size: 20px;
   cursor: pointer;
   &:hover {
-    background-color: #ebebeb;
-    color: black;
+    background-color: ${(props) => props.theme.BTN_HOVER_BACKGROUND_COLOR};
+    color: ${(props) => props.theme.BTN_HOVER_FONT_COLOR};
     font-size: 21px;
+    border: none;
   }
+`;
+
+const SwitchThemeBtn = styled.div`
+  width: 40px;
+  height: 40px;
+  background-image:url(${props=>props.theme.SWITCH_THEME_BTN});
+  background-size:cover;
+  position: absolute;
+  right: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  
+
 `;
 
 const Reg = /^[A-Za-z]$/;
@@ -125,12 +177,13 @@ export function Game() {
 
   const { data: wordToday } = useGetTodayQuery();
 
-console.log(wordToday?.today.toLowerCase());
-
   useEffect(() => {
     function keyDownHandler(e: KeyboardEvent) {
       if (Reg.test(e.key) && column < 5 && gameState && row < 6) {
+        dispatch(setIsPressedTrue());
+
         dispatch(inputLetter({ ans: e.key.toUpperCase() }));
+
       }
 
       if (e.key === "Backspace" && column > 0 && gameState) {
@@ -153,7 +206,9 @@ console.log(wordToday?.today.toLowerCase());
           promise.then(() => {
             if (i + 1 === 5) {
               dispatch(validateGuess());
-              const guessLetters = cards[row].map((item: { letter: string }) => item.letter);
+              const guessLetters = cards[row].map(
+                (item: { letter: string }) => item.letter
+              );
               dispatch(
                 setKeyState({ guessing: guessLetters, ans: wordToday?.today })
               );
@@ -163,19 +218,14 @@ console.log(wordToday?.today.toLowerCase());
       }
     }
 
-    
-
     window.addEventListener("keydown", keyDownHandler);
 
-    return () => 
-      window.removeEventListener("keydown", keyDownHandler);
-   
-    
+    return () => window.removeEventListener("keydown", keyDownHandler);
   }, [cards, column, dispatch, gameState, row, wordToday?.today]);
 
   const restartGame = () => {
     dispatch(replayGame());
-    dispatch(clearKeyState())
+    dispatch(clearKeyState());
   };
 
   useEffect(() => {
@@ -206,7 +256,11 @@ console.log(wordToday?.today.toLowerCase());
 
   return (
     <>
-      <Header>Wordle</Header>
+      <Header>
+        Wordle
+        <SwitchThemeBtn onClick={() => dispatch(toggleTheme())}>
+        </SwitchThemeBtn>
+      </Header>
       <Wrapper>
         <Plate>
           {cards.map((item, index) => {
@@ -217,6 +271,7 @@ console.log(wordToday?.today.toLowerCase());
                   backGround={unit.status}
                   borderColor={unit.letter}
                   isFlipped={unit.isFlipped}
+                  isPressed={unit.isPressed}
                 >
                   {unit.letter}
                 </Card>

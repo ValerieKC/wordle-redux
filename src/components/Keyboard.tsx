@@ -10,6 +10,7 @@ import {
   setColor,
   validateGuess,
   deleteLetter,
+  setIsPressedTrue,
 } from "../features/game/cardSlice";
 import { useGetTodayQuery } from "../features/game/apiSlice";
 import { setKeyState,firstRowKeys,secondRowKeys,thirdRowKeys } from "../features/game/keyboardSlice";
@@ -80,11 +81,11 @@ export default function Keyboard() {
   const firstRow = useSelector(firstRowKeys);
     const secondRow = useSelector(secondRowKeys);
   const thirdRow = useSelector(thirdRowKeys);
-console.log(firstRow)
 
   const keyBtnHandler = (word: string) => {
     if (column === 5) return;
     if (column < 5 && gameState && row < 6) {
+      dispatch(setIsPressedTrue());
       dispatch(inputLetter({ ans: word.toUpperCase() }));
     }
   };
