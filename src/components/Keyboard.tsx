@@ -29,6 +29,7 @@ const Row = styled.div`
   width: 100%;
   margin: 0 auto 8px;
   display: flex;
+  justify-content:center;
   column-gap: 6px;
   touch-action: manipulation;
 `;
@@ -52,15 +53,12 @@ const Btn = styled.div`
   background-color: ${(props: BtnColor) =>
     props.isGuessed ? props.backGround : "#818384"};
 `;
-const Space = styled.div`
-  height: 58px;
-  width: 24.3px;
-`;
+
 
 const SpecialBtn = styled.div`
-  width: 84.9px;
-  font-size: 12px;
+  width: calc(((100% - 48px) / 8 / 2 + 8px) * 2);
   height: 58px;
+  font-size: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -144,7 +142,7 @@ export default function Keyboard() {
         ))}
       </Row>
       <Row>
-        <Space />
+        {/* <Space /> */}
         {secondRow.map((item) => (
           <Btn
             key={item.key}
@@ -155,7 +153,7 @@ export default function Keyboard() {
             {item.key}
           </Btn>
         ))}
-        <Space />
+        {/* <Space /> */}
       </Row>
       <Row>
         <SpecialBtn onClick={enterHandler}>Enter</SpecialBtn>
