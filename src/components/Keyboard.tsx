@@ -13,7 +13,12 @@ import {
   setIsPressedTrue,
 } from "../features/game/cardSlice";
 import { useGetTodayQuery } from "../features/game/apiSlice";
-import { setKeyState,firstRowKeys,secondRowKeys,thirdRowKeys } from "../features/game/keyboardSlice";
+import {
+  setKeyState,
+  firstRowKeys,
+  secondRowKeys,
+  thirdRowKeys,
+} from "../features/game/keyboardSlice";
 
 const Wrapper = styled.div`
   margin: auto auto;
@@ -24,19 +29,19 @@ const Row = styled.div`
   width: 100%;
   margin: 0 auto 8px;
   display: flex;
+  justify-content:center;
   column-gap: 6px;
   touch-action: manipulation;
 `;
 
 interface BtnColor {
-  isGuessed:boolean;
-  backGround:string;
+  isGuessed: boolean;
+  backGround: string;
 }
 
 const Btn = styled.div`
   width: calc((100% - 54px) / 10);
   height: 58px;
-  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -48,16 +53,12 @@ const Btn = styled.div`
   background-color: ${(props: BtnColor) =>
     props.isGuessed ? props.backGround : "#818384"};
 `;
-const Space = styled.div`
-  height: 58px;
-  width: calc((100% - 54px) / 10 / 2);
-`;
+
 
 const SpecialBtn = styled.div`
-  width: calc((100% - 54px) / 10 * 2);
-  font-size: 12px;
+  width: calc(((100% - 48px) / 8 / 2 + 8px) * 2);
   height: 58px;
-  flex: 1;
+  font-size: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -68,8 +69,6 @@ const SpecialBtn = styled.div`
   background-color: #818384;
 `;
 
-
-
 export default function Keyboard() {
   const dispatch = useDispatch();
   const cards = useSelector(cardsState);
@@ -79,7 +78,7 @@ export default function Keyboard() {
   const { data: wordToday } = useGetTodayQuery();
 
   const firstRow = useSelector(firstRowKeys);
-    const secondRow = useSelector(secondRowKeys);
+  const secondRow = useSelector(secondRowKeys);
   const thirdRow = useSelector(thirdRowKeys);
 
   const keyBtnHandler = (word: string) => {
@@ -108,8 +107,13 @@ export default function Keyboard() {
           if (i + 1 === 5) {
             dispatch(validateGuess());
             const guessLetters = cards[row].map((item) => item.letter);
-            dispatch(setKeyState({guessing:guessLetters,ans:wordToday?.today.toUpperCase()}))
-            
+            dispatch(
+              setKeyState({
+                guessing: guessLetters,
+                ans: wordToday?.today.toUpperCase(),
+              })
+            );
+
             // console.log(guessLetters);
           }
         });
@@ -138,7 +142,7 @@ export default function Keyboard() {
         ))}
       </Row>
       <Row>
-        <Space />
+        {/* <Space /> */}
         {secondRow.map((item) => (
           <Btn
             key={item.key}
@@ -149,7 +153,7 @@ export default function Keyboard() {
             {item.key}
           </Btn>
         ))}
-        <Space />
+        {/* <Space /> */}
       </Row>
       <Row>
         <SpecialBtn onClick={enterHandler}>Enter</SpecialBtn>
