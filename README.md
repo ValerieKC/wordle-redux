@@ -1,46 +1,39 @@
-# Getting Started with Create React App and Redux
+# Wordle
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
+[Website URL](https://wordle-redux.firebaseapp.com/)
 
-## Available Scripts
+## Description
 
-In the project directory, you can run:
+Recreate the classic wordle game, in which players need to guess the five-letter puzzle of the day within a limited number of attempts.
 
-### `npm start`
+## Technique
+- React
+- Create React App
+- TypeScript
+- Redux Toolkit
+- RTK Query
+- Redux-Persist
+- Firebase Firestore
+- styled-components
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Feature
+- If the guessed letter is in the correct position, it will be displayed in green. If the guessed letter is correct but in the wrong position, it will be displayed in yellow. If the letter is not in the puzzle word, it will be displayed in gray.
+- User can either enter letters by key press or virtual keyboard.
+<p align="center">
+  <img src="./cardBackGroundColor.png" alt="Background color change"/>
+</p>
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- Border color will change while input.
+<p align="center">
+  <img src="./borderColorChanged.png" alt="Border color change"/>
+</p>
 
-### `npm test`
+- The fewer attempts the player uses to guess the puzzle word, the higher the score they will receive.
+<p align="center">
+  <img src="./correctAns.png" alt="Correct Answer"/>
+</p>
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+-Can toggle to change theme between light and dark mode.
+<p align="center" width="100%">
+  <img src="./darkTheme.png"  width="50%" height="100%" alt="Dark Mode"/><img src="./lightTheme.png"  width="50%" height="100%" alt="Light Mode"/>
+</p>
