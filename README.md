@@ -33,7 +33,7 @@ Recreate the classic wordle game, in which players need to guess the five-letter
   <img src="./correctAns.png" alt="Correct Answer"/>
 </p>
 
--Can toggle to change theme between light and dark mode.
+- Can toggle to change theme between light and dark mode.
 <p align="center" width="100%">
   <img src="./darkTheme.png"  width="50%" height="100%" alt="Dark Mode"/><img src="./lightTheme.png"  width="50%" height="100%" alt="Light Mode"/>
 </p>
