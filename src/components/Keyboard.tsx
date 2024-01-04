@@ -96,7 +96,7 @@ export default function Keyboard() {
           setTimeout(() => {
             dispatch(
               setColor({
-                ans: wordToday?.today.toUpperCase(),
+                ans: wordToday?.word.toUpperCase(),
                 index: i,
               })
             );
@@ -110,7 +110,7 @@ export default function Keyboard() {
             dispatch(
               setKeyState({
                 guessing: guessLetters,
-                ans: wordToday?.today.toUpperCase(),
+                ans: wordToday?.word.toUpperCase(),
               })
             );
 

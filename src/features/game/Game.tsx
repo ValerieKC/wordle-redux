@@ -196,7 +196,7 @@ export function Game() {
             setTimeout(() => {
               dispatch(
                 setColor({
-                  ans: wordToday?.today.toUpperCase(),
+                  ans: wordToday?.word.toUpperCase(),
                   index: i,
                 })
               );
@@ -210,7 +210,7 @@ export function Game() {
                 (item: { letter: string }) => item.letter
               );
               dispatch(
-                setKeyState({ guessing: guessLetters, ans: wordToday?.today })
+                setKeyState({ guessing: guessLetters, ans: wordToday?.word })
               );
             }
           });
@@ -221,7 +221,7 @@ export function Game() {
     window.addEventListener("keydown", keyDownHandler);
 
     return () => window.removeEventListener("keydown", keyDownHandler);
-  }, [cards, column, dispatch, gameState, row, wordToday?.today]);
+  }, [cards, column, dispatch, gameState, row, wordToday?.word]);
 
   const restartGame = () => {
     dispatch(replayGame());
