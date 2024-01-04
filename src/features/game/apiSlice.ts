@@ -3,19 +3,19 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const apiKey:string|undefined = process.env.REACT_APP_RAPIDAPI_KEY;
 
 type GetTodayResponse = {
-  today: string;  
+  word: string;  
 };
 
 const wordleApi = createApi({
   reducerPath: "wordleApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://wordle-answers-solutions.p.rapidapi.com/",
+    baseUrl: "https://wordle-game-api1.p.rapidapi.com/",
     prepareHeaders: (headers) => {
       if (apiKey) {
         headers.set("X-RapidAPI-Key", apiKey);
         headers.set(
           "X-RapidAPI-Host",
-          "wordle-answers-solutions.p.rapidapi.com"
+          "wordle-game-api1.p.rapidapi.com"
         );
         return headers;
       }
@@ -23,7 +23,7 @@ const wordleApi = createApi({
   }),
   endpoints: (builder) => ({
     getToday: builder.query<GetTodayResponse, void>({
-      query: () => ({ url: "today" }),
+      query: () => ({ url: "word" }),
     }),
   }),
 });
