@@ -15,12 +15,10 @@ import {
   correctness,
   setIsPressedTrue
 } from "./cardSlice";
-import { useGetTodayQuery } from "./apiSlice";
 import Keyboard from "../../components/Keyboard";
 import { setKeyState, clearKeyState } from "./keyboardSlice";
 import { toggleTheme } from "../theme/themeSlice";
-import ThemeBTN from "../theme/theme.png";
-import Theme_Night_BTN from "..theme//theme-night.png"
+
 
 const Header = styled.div`
   width: 100%;
@@ -176,7 +174,6 @@ export function Game() {
   const gameState = useSelector(gameStatus);
   const ansCorrect = useSelector(correctness);
 
-  // const { data: wordToday } = useGetTodayQuery();
   useEffect(() => {
     function keyDownHandler(e: KeyboardEvent) {
       if (Reg.test(e.key) && column < 5 && gameState && row < 6) {
