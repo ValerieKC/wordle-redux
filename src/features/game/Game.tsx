@@ -166,6 +166,7 @@ const SwitchThemeBtn = styled.div`
 
 const Reg = /^[A-Za-z]$/;
 
+const wordToday = {word: 'apple'};
 export function Game() {
   const dispatch = useDispatch();
 
@@ -175,8 +176,7 @@ export function Game() {
   const gameState = useSelector(gameStatus);
   const ansCorrect = useSelector(correctness);
 
-  const { data: wordToday } = useGetTodayQuery();
-
+  // const { data: wordToday } = useGetTodayQuery();
   useEffect(() => {
     function keyDownHandler(e: KeyboardEvent) {
       if (Reg.test(e.key) && column < 5 && gameState && row < 6) {
